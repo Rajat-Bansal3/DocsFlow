@@ -1,7 +1,7 @@
 "use client";
 
 import { ClientSideSuspense, RoomProvider } from "@liveblocks/react/suspense";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Loader from "./Loader";
 import { cn } from "@/lib/utils";
 import Header from "./Header";
@@ -9,18 +9,29 @@ import ActiveCollaborators from "./ActiveCollaborators";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { Editor } from "./editor/Editor";
 import { Input } from "@/components/ui/input";
-import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
 import edit from "@/public/assets/icons/edit.svg";
 import { updateTitleAction } from "@/lib/actions/room.actions";
+import ShareModel from "./ShareModel";
 
-type Props = {};
+type CollaborativeRoomProps = {
+  className?: string;
+  roomId: string;
+  roomMetadata: {
+    title: string;
+    creatorId: string;
+    email:string
+  };
+  currentUserType: string;
+  users: any[];
+};
 
 const CollabRoom = ({
   className,
   roomId,
   roomMetadata,
   currentUserType,
+  users,
 }: CollaborativeRoomProps) => {
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,6 +42,8 @@ const CollabRoom = ({
 
   const updateTitle = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+      e.preventDefault();
+
       setLoading(true);
       try {
         if (title !== roomMetadata.title) {
@@ -49,10 +62,6 @@ const CollabRoom = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (editing && inputRef.current) {
-      inputRef.current.focus();
-    }
-
     setTitle(e.target.value);
   };
 
@@ -122,10 +131,15 @@ const CollabRoom = ({
                   <p className='view-only'>View Only</p>
                 )}
 
-                {loading && <Loader />}
               </div>
               <div className='flex w-full flex-1 justify-end gap-2'>
                 <ActiveCollaborators />
+                <ShareModel
+                  roomId={roomId}
+                  collabs={users}
+                  creatorId={roomMetadata.creatorId}
+                  currentUserType={currentUserType as UserType}
+                />
                 <SignedOut>
                   <SignInButton />
                 </SignedOut>

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { dateConverter } from "@/lib/utils";
 import { toast } from "@/components/ui/use-toast";
 import DeleteButton from "@/components/DeleteButton";
+import Notifications from "@/components/Notifications";
 
 const Home = async () => {
   const user = await currentUser();
@@ -28,7 +29,7 @@ const Home = async () => {
     <main className='home-container'>
       <Header className='sticky left-0 top-0'>
         <div className='flex items-center gap-2 lg:gap-4'>
-          Notifications
+          <Notifications/>
           <SignedIn>
             <UserButton />
           </SignedIn>

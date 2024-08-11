@@ -50,7 +50,7 @@ const Document = async ({ params: { id } }: SearchParamProps) => {
           title: room.metadata.title,
         }}
         users={usersData}
-        currentUserType={`editor`}
+        currentUserType={currentUserType}
       />
     </div>
   );
